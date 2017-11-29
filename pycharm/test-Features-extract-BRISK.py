@@ -24,6 +24,9 @@ for item in keypoints1:
 
 
 imc = cv2.resize(imc, (1500, 800))
-cv2.imshow("Top 'k' features", imc)
+dmode = 'BRISK'
+imc = cv2.putText(imc, 'feature detection mode: ' + dmode, (100,100), 1, 3, (255,255,255),3)
+cv2.imshow('feature detection mode: ' + dmode, imc)
+cv2.imwrite('out/' + dmode + '.jpg', imc)
 cv2.waitKey()
 cv2.destroyAllWindows()
