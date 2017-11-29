@@ -1,0 +1,6 @@
+einige Algorithmen sind im Standardpaket von opencv nicht enthalten. Diese sind gesammelt im Modul opencv-contribution (opencv-contrib) verfügbar.
+Die Installation der Module kann zu Problemen führen mit der automatischen Code Vervollständigung in PyCharm. Je nach Vorgehen funktioniert sie nicht mit dem contribution Modul oder dann zusätzlich für das Standard opencv Modul auch nicht mehr. Abhilfe schaffte eine Deinstallation der opencv-python und opencv-contrib-python Module, gefolgt von einer manuellen Installation einer heruntergeladenen Wheel Datei: "opencv_python-3.3.1+contrib-cp36-cp36m-win_amd64.whl"
+In dieser Datei sind opencv Standard und Contribution bereits zusammen. Installiert wird ausgehend vom Ordner des gewünschten Python Interpreters: "Scripts/pip install <whl-Datei>", bspw.
+'c:\python3\Scripts\pip.exe install "d:\Downloads\opencv_python-3.3.1+contrib-cp36-cp36m-win_amd64.whl"'
+
+beim erstmaligen Start nach der Installation dieses Moduls benötigt PyCharm einige Zeit für Bereitstellung der Code Completion.
