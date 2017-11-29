@@ -14,7 +14,7 @@ orb = cv2.ORB_create(500, 1.2, 8, 30, 0, 2, 0, 31, 20)
 # find the keypoints with ORB
 
 # compute the descriptors with ORB
-kp, des = orb.compute(img, kp)
+#kp, des = orb.compute(img, kp)
 
 
 # draw only keypoints location,not size and orientation
