@@ -1,0 +1,27 @@
+---
+InfoText:
+    Diese Info wir als Zeile ebenfalls ins Bild geschrieben
+
+
+Detector:
+  Type:         BRISK
+  maxFeatures:  10000
+
+
+
+Descriptor:
+  Type:         FREAK
+
+
+
+Matcher:
+  Type:         Bfm
+
+
+Filter:
+  Type:         None
+
+
+
+
+...
