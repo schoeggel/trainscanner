@@ -52,3 +52,45 @@ def ___loadconfigini(filename):
 
 def ___saveconfigmat(filename, dic, structname):
     scipy.io.savemat(filename, dic, False)
+
+
+
+
+
+# gibt die eine option aus einem configparserobject zurück
+# in der Form des bestgeeignetsten Datentyps. Int vor Float vor None vor String
+class IniTypehandler:
+    def __init__(self, configparserobject):
+        self.cp = configparserobject
+
+    def get(self, option):
+        if option is None:
+            raise Exception("expecting String as arg 1, received None")
+
+        #Lese Option:
+        try:
+            content = self.cp[option]
+        except:
+            raise Exception("unknown error accessing option from configparser object")
+
+
+        # Try to convert to int
+        try:
+            return int(content)
+        except:
+            pass
+
+        # Try to convert to float
+        try:
+            return float(content)
+        except:
+            pass
+
+        # Try to convert to string
+        try:
+            if content.lower() == "none":
+                return
+            else:
+                return str(content)
+        except:
+            raise Exception("could not convert content from configparser object")

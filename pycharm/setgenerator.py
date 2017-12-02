@@ -5,6 +5,13 @@
 #
 # Strings in Ntup immer als Liste verkapseln: ['Text'], weil 'Text' sonst zerlegt (=Liste von Chars)
 # Leere Einträge in Ntup immer so definieren: [None]
+# Die Bezeichner sind case insensitiv. type: 'BRISK' ist gleich wie TYPE: 'BRISK'
+# Die Werte sind case sensitiv. type: 'BRISK' != type: 'brisk'
+#todo: umschreiben, damit die detectoren und descriptoren im falle des gleichen typs
+#todo: auch die gleichen paramter aufweisen. das würde die Kombinationen drastisch reduzieren.
+#todo: eventuell kann umgeschrieben werden ohne named tuple, so dass nur noch die wirklich benötigten paramter angegeben werden müssen
+
+
 
 import collections
 import itertools
@@ -13,11 +20,82 @@ import configparser
 
 
 # Extraktor Konfiguration definieren
-
-Ntup = collections.namedtuple('ExtractorParams', 'type threshold specialflag rareAttribute')
+Ntup = collections.namedtuple('ExtractorParams',
+                              'type '
+                              'maxfeatures '                 # nfeatures – The maximum number of features to retain.
+                              'threshold '
+                              'levels '
+                              'octaves '
+                              'octaveLayers ' 
+                              'scale '
+                              'fast_nonmaxSuppression '
+                              'mser_delta '                     
+                              'orb_WTAK '   
+                              'extended '
+                              'upright '
+                              'freak_scalenormalized '
+                              'futureArgument1')
 parameters = [
-    Ntup(type=['BRISK'], threshold=[10, 20, 50, 100, 500], specialflag=[True, False], rareAttribute=['nix']),
-    Ntup(type=['ORB'], threshold=[10, 20, 50, 100, 300], specialflag=[True], rareAttribute=['dense', 'sparse'])
+    Ntup(type=['BRISK'],
+         threshold=[10, 20, 50, 100],           # default = 30
+         octaves=[2, 3, 5],                     # default = 3
+         scale=[0.66, 1.00, 1.66],              # default = 1.00
+         maxfeatures=[None],
+         levels=[None],
+         octaveLayers=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
+    Ntup(type=['ORB'],
+         maxfeatures=[500, 5000, 10000],        # default = 500
+         scale=[1.1, 1.2, 1.5],                 # default = 1.2
+         levels=[4, 8, 16],                     # default = 8
+         orb_WTAK=[2, 3, 4],                    # default = 2
+         threshold=[None],
+         octaves=[None],
+         octaveLayers=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
+    Ntup(type=['SURF'],
+         maxfeatures=[None],
+         threshold=[300, 450, 1000],
+         levels=[None],
+         octaves=[4, 8, 12],                # default = 4
+         octaveLayers=[2, 4],               # default = 2
+         scale=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[0, 1],
+         upright=[0, 1],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
+
+    Ntup(type=[None],
+         maxfeatures=[None],
+         threshold=[None],
+         levels=[None],
+         octaves=[None],
+         octaveLayers=[None],
+         scale=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None])
 ]
 all_extractor_names = Ntup._fields
 all_extractor_defs = list()
@@ -28,11 +106,83 @@ for item in parameters:
 
 
 # Deskriptor Konfiguration definieren
+# Ntup bleibt gleich wie beim detector
 
-Ntup = collections.namedtuple('DescriptorParams', 'type param1 param2')
 parameters = [
-    Ntup(type=['SURF'], param1=[0, 1, 5], param2=[None, True, False]),
-    Ntup(type=['FREAK'], param1=[10, 11, 55, 450], param2=[None])
+    Ntup(type=['BRISK'],
+         threshold=[10, 20, 50, 100],  # default = 30
+         octaves=[2, 3, 5],  # default = 3
+         scale=[0.66, 1.00, 1.66],  # default = 1.00
+         maxfeatures=[None],
+         levels=[None],
+         octaveLayers=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
+    Ntup(type=['ORB'],
+         maxfeatures=[500, 5000, 10000],  # default = 500
+         scale=[1.1, 1.2, 1.5],  # default = 1.2
+         levels=[4, 8, 16],  # default = 8
+         orb_WTAK=[2, 3, 4],  # default = 2
+         threshold=[None],
+         octaves=[None],
+         octaveLayers=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
+    Ntup(type=['SURF'],
+         maxfeatures=[None],
+         threshold=[300, 450, 1000],
+         levels=[None],
+         octaves=[4, 8, 12],  # default = 4
+         octaveLayers=[2, 4],  # default = 2
+         scale=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[0, 1],
+         upright=[0, 1],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
+    Ntup(type=['FREAK'],
+         maxfeatures=[None],
+         threshold=[None],
+         levels=[None],
+         octaves=[None],
+         octaveLayers=[None],
+         scale=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
+    Ntup(type=[None],
+         maxfeatures=[None],
+         threshold=[None],
+         levels=[None],
+         octaves=[None],
+         octaveLayers=[None],
+         scale=[None],
+         fast_nonmaxSuppression=[None],
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None])
 ]
 all_descriptor_names = Ntup._fields
 all_descriptor_defs = list()
@@ -65,8 +215,8 @@ for oneconfig in masterlist:
     Config = configparser.ConfigParser()
 
 # HEADER
-    Config.add_section('File')
-    Config.set('File', 'filename', configfile_name)
+    Config.add_section('file')
+    Config.set('file', 'configfile', configfile_name)
 
 # SECTIONS
     for section in sectioncontrol:
