@@ -2,6 +2,8 @@
 import scipy.io.matlab
 from ruamel.yaml import YAML
 import configparser
+import cv2
+
 
 
 def saveconfig(filename, dic, structname='python'):
@@ -94,3 +96,23 @@ class IniTypehandler:
                 return str(content)
         except:
             raise Exception("could not convert content from configparser object")
+
+def writeLQjpg(im, dst, header='', moretext = ''):
+    # Schreibt ein jpg niederiger qualität nach 'dst'
+    # header kommt ganz oben als text einzeilig rein
+    # todo: moretext: nach zeilen splitten und zusätzlich overlayen
+
+    moretextStart = 160
+    headerColor = (128, 0, 255)
+    textColor = (255, 0, 255)
+
+    # Text einfügen ins (RGB-) Bild
+    im = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
+    im = cv2.putText(im, header, (40, 80), 1, 6, headerColor, 3)
+    for line in moretext:
+        im = cv2.putText(im, line, (40, moretextStart), 1, 6, textColor, 3)
+        moretextStart += 80
+
+    # Speichern
+    cv2.imwrite(dst, im, [cv2.IMWRITE_JPEG_QUALITY, 10])
+

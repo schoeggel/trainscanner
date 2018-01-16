@@ -7,9 +7,11 @@
 # Leere Einträge in Ntup immer so definieren: [None]
 # Die Bezeichner sind case insensitiv. type: 'BRISK' ist gleich wie TYPE: 'BRISK'
 # Die Werte sind case sensitiv. type: 'BRISK' != type: 'brisk'
-#todo: umschreiben, damit die detectoren und descriptoren im falle des gleichen typs
-#todo: auch die gleichen paramter aufweisen. das würde die Kombinationen drastisch reduzieren.
-#todo: eventuell kann umgeschrieben werden ohne named tuple, so dass nur noch die wirklich benötigten paramter angegeben werden müssen
+# todo: umschreiben, damit die detectoren und descriptoren im falle des gleichen typs
+# todo: auch die gleichen paramter aufweisen. das würde die Kombinationen drastisch reduzieren.
+# todo: --> Eventuell so lösen, dass wenn extr.type  == desc.type dann Eintrag löschen, falls
+# todo: nicht alle Paramter von desc mit den Paramter von extr. übereinstimmen.
+# todo: eventuell kann umgeschrieben werden ohne named tuple, so dass nur noch die wirklich benötigten paramter angegeben werden müssen
 
 
 
@@ -17,6 +19,24 @@ import collections
 import itertools
 import datetime
 import configparser
+
+
+
+def rejectConfig(configList):
+    # Liefert true, wenn die Konfigurations verworfen werden soll.
+    # Bspw. wenn Desktriptor und Extraktor Typen gleich sind, aber ihre Parameter nicht.
+    # Die Typen sind in den Arrays 0 und 1 an erster Stelle gespeichert. [0][0] und [1][0] sind die Typen
+
+    # Die Typen sind unterschiedlich --> Keine Optimierung möglich
+    if configList[0][0] != configList[1][0]:
+        return False
+
+    # Die Typen sind identisch --> Nur die komplett identische Variante behalten
+    if configList[0] != configList[1]:
+        return True
+
+    return False
+
 
 
 # Extraktor Konfiguration definieren
@@ -198,6 +218,7 @@ masterlist = list(all_combinations)
 datestring = datetime.datetime.now().strftime("%Y-%m-%d")
 
 #Sectioncontrol bauen
+#Die .ini Datei ist in sections unterteilt.
 sectionnames = ('detector', 'extractor')
 fieldnames = (all_extractor_names, all_descriptor_names)
 sectionids = tuple(range(len(sectionnames)))
@@ -205,27 +226,45 @@ sectioncontrol = list(zip(sectionids, sectionnames, fieldnames))
 
 
 # Outputfile schreiben
+verb = True         # Zeigt jeden Datainamen in der Console an.
+dryrun = True       # ohne Dateien zu schreiben.
 configfile_basename = "tmp/cfg-test-" + datestring
-filecounter = 0
+filecounterWritten = 0
+filecounterSkipped = 0
 for oneconfig in masterlist:
-    filecounter += 1
-    configfile_name = configfile_basename + str(filecounter).zfill(8) + '.ini'
-    print(configfile_name)
-    cfgfile = open(configfile_name, 'w')
-    Config = configparser.ConfigParser()
+    if rejectConfig(oneconfig):
+        if verb:
+            print('ExtractorType=DescriptorType while using different paramters. -->  No .ini File written.')
+        filecounterSkipped += 1
+        continue
 
-# HEADER
-    Config.add_section('file')
-    Config.set('file', 'configfile', configfile_name)
+    filecounterWritten += 1
+    configfile_name = configfile_basename + str(filecounterWritten).zfill(8) + '.ini'
+    if verb:
+        status = str(+ filecounterWritten) + "/" + str(filecounterSkipped) + "/" + str(filecounterSkipped+filecounterWritten)
+        print('written/skipped/total: ' + status + " | " + configfile_name)
+    if not dryrun:
+        cfgfile = open(configfile_name, 'w')
+        Config = configparser.ConfigParser()
 
-# SECTIONS
-    for section in sectioncontrol:
-        # ONE SECTION
-        sectionid, sectionname, fieldnames = section
-        Config.add_section(sectionname)
-        for item in list(zip(fieldnames, oneconfig[sectionid])):
-            fname, val = item
-            Config.set(sectionname, str(fname), str(val))
+    # HEADER
+        Config.add_section('file')
+        Config.set('file', 'configfile', configfile_name)
 
-    Config.write(cfgfile)
-    cfgfile.close()
+    # SECTIONS
+        for section in sectioncontrol:
+            # ONE SECTION
+            sectionid, sectionname, fieldnames = section
+            Config.add_section(sectionname)
+            for item in list(zip(fieldnames, oneconfig[sectionid])):
+                fname, val = item
+                Config.set(sectionname, str(fname), str(val))
+
+        Config.write(cfgfile)
+        cfgfile.close()
+
+status = str(+ filecounterWritten) + "/" + str(filecounterSkipped) + "/" + str(filecounterSkipped + filecounterWritten)
+print('\nReport:\n------\n')
+print('written\t' + str(filecounterWritten))
+print('skipped\t' + str(filecounterSkipped))
+print('total  \t' + str(filecounterWritten+filecounterSkipped))

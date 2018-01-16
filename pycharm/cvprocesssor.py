@@ -2,8 +2,8 @@ import os
 import cv2
 import configparser
 from timeit import default_timer as timer
-from util import IniTypehandler
-
+import util
+import mFilter
 
 
 standardfile = 'tmp/cfg-test-2017-12-0100000001.ini'
@@ -39,7 +39,7 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None):
 
 # DETECTOR
     cfg = ini['detector']
-    c = IniTypehandler(cfg)
+    c = util.IniTypehandler(cfg)
     detectortype = cfg['type'].lower()
     if detectortype == "brisk":
         if not background:
@@ -56,7 +56,6 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None):
                                 c.get('levels'),
                                 edgeThreshold=25,
                                 WTA_K=c.get('orb_wtak'))
-
 
     elif detectortype == "surf":
         if not background:
@@ -79,7 +78,6 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None):
             print(errmsg)
         raise Exception(errmsg)
 
-
     # find keypoints:
     kp1 = detect.detect(img1)
     kp2 = detect.detect(img2)
@@ -87,18 +85,37 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None):
     foundkp2 = len(kp2)
 
 
-
 # DESCRIPTOR
-    cfg = ini['descriptor']
-    c = IniTypehandler(cfg)
+    cfg = ini['extractor']
+    c = util.IniTypehandler(cfg)
     detectortype = cfg['type'].lower()
     if detectortype == "brisk":
         if not background:
             print("using", detectortype)
-        detect = cv2.BRISK_create(c.get('threshold'),
+        describe = cv2.BRISK_create(c.get('threshold'),
                                   c.get('octaves'),
                                   c.get('scale'))
 
+
+    #dummie:
+    describe = cv2.xfeatures2d.FREAK_create()
+
+    # descriptors
+    kp1, des1 = describe.compute(img1, kp1)
+    kp2, des2 = describe.compute(img2, kp2)
+
+    # MATCHER
+    # create BFMatcher object
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+    # Match descriptors.
+    matches = bf.match(des1, des2)
+
+    newmatches = mFilter.mFilter(matches, kp1, kp2, 5)
+
+
+    if imgoutpath is not None:
+        util.writeLQjpg(detect, imgoutpath, inifile)
     # todo: Dummie Return ersetzen
     timerend = timer()
     return {"Errors" : None, "Result": "ok", "TimeElapsed": timerend-timerstart}

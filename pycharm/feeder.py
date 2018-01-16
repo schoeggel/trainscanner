@@ -17,7 +17,7 @@ img2 = cv2.cvtColor(imc2, cv2.COLOR_BGR2GRAY)
 try:
     results = cvprocesssor.cvprocess(img1,
                                      img2,
-                                     'cfg/process/processtest5.ini')
+                                     'cfg/process/processtest5.ini', 'tmp/')
 except Exception as detail:
     print(detail)
     results = ('ERROR', str(detail))
