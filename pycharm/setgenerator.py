@@ -7,10 +7,7 @@
 # Leere Einträge in Ntup immer so definieren: [None]
 # Die Bezeichner sind case insensitiv. type: 'BRISK' ist gleich wie TYPE: 'BRISK'
 # Die Werte sind case sensitiv. type: 'BRISK' != type: 'brisk'
-# todo: umschreiben, damit die detectoren und descriptoren im falle des gleichen typs
-# todo: auch die gleichen paramter aufweisen. das würde die Kombinationen drastisch reduzieren.
-# todo: --> Eventuell so lösen, dass wenn extr.type  == desc.type dann Eintrag löschen, falls
-# todo: nicht alle Paramter von desc mit den Paramter von extr. übereinstimmen.
+
 # todo: eventuell kann umgeschrieben werden ohne named tuple, so dass nur noch die wirklich benötigten paramter angegeben werden müssen
 
 
@@ -227,8 +224,10 @@ sectioncontrol = list(zip(sectionids, sectionnames, fieldnames))
 
 # Outputfile schreiben
 verb = True         # Zeigt jeden Datainamen in der Console an.
-dryrun = True       # ohne Dateien zu schreiben.
-configfile_basename = "tmp/cfg-test-" + datestring
+dryrun = False       # ohne Dateien zu schreiben.
+configfile_dir = "tmp/"
+configfile_basename = "cfg-test-" + datestring
+configfile_root = configfile_dir + configfile_basename
 filecounterWritten = 0
 filecounterSkipped = 0
 for oneconfig in masterlist:
@@ -239,17 +238,18 @@ for oneconfig in masterlist:
         continue
 
     filecounterWritten += 1
-    configfile_name = configfile_basename + str(filecounterWritten).zfill(8) + '.ini'
+    configfile_fullpath = configfile_root + str(filecounterWritten).zfill(8) + '.ini'
     if verb:
         status = str(+ filecounterWritten) + "/" + str(filecounterSkipped) + "/" + str(filecounterSkipped+filecounterWritten)
-        print('written/skipped/total: ' + status + " | " + configfile_name)
+        print('written/skipped/total: ' + status + " | " + configfile_fullpath)
     if not dryrun:
-        cfgfile = open(configfile_name, 'w')
+        cfgfile = open(configfile_fullpath, 'w')
         Config = configparser.ConfigParser()
 
     # HEADER
         Config.add_section('file')
-        Config.set('file', 'configfile', configfile_name)
+        Config.set('file', 'configfile', configfile_fullpath)
+        Config.set('file', 'name', configfile_basename + str(filecounterWritten).zfill(8))
 
     # SECTIONS
         for section in sectioncontrol:

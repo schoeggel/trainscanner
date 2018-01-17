@@ -4,11 +4,13 @@ import configparser
 from timeit import default_timer as timer
 import util
 import mFilter
+import matplotlib.pyplot as plt
+from random import shuffle
 
 
 standardfile = 'tmp/cfg-test-2017-12-0100000001.ini'
 
-def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None):
+def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="undefined"):
     # Verarbeitet eine .ini Datei und führt die Verarbeitungskette durch
     # gemäss den in der .ini Datei definierten Parametern. Return=Resultate ausser Bild
     # Das Bild selber wird (falls angegeben) in den Ordner 'imgoutpath' gespeichert.
@@ -111,11 +113,34 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None):
     # Match descriptors.
     matches = bf.match(des1, des2)
 
-    newmatches = mFilter.mFilter(matches, kp1, kp2, 5)
+    # Geht nur wenn sequentiell verglichen wird: Filtern nach Parallelität der Matches
+    if seiteLRS == "L" or seiteLRS == "R":
+        matches = sorted(matches, key=lambda x: x.distance)
+        newmatches, mfilterinfo = mFilter.mFilter(matches, kp1, kp2, 0.1)
+    else:
+        newmatches = None
+        mfilterinfo = "no mFilter"
 
+    # zufällige n Matches einzeichnen.
+    n = 75
+    shuffle(matches)
+    # img4 = cv2.drawMatches(img1, kp1, img2, kp2, matches[:n], None, flags=2)
+    # plt.imshow(img4), plt.show()
+
+    if newmatches:
+        shuffle(newmatches)
+        img5 = cv2.drawMatches(img1, kp1, img2, kp2, newmatches[:n], None, flags=2)
+        # plt.imshow(img5), plt.show()
+    else:
+        img5 = cv2.drawMatches(img1, kp1, img2, kp2, matches[:n], None, flags=2)
 
     if imgoutpath is not None:
-        util.writeLQjpg(detect, imgoutpath, inifile)
+        cfg = ini['file']
+        dst = imgoutpath + cfg['name'] + ".jpg"
+        print("writing image to file:")
+        print(dst)
+        util.writeLQjpg(img5, dst, inifile, [mfilterinfo])
+
     # todo: Dummie Return ersetzen
     timerend = timer()
     return {"Errors" : None, "Result": "ok", "TimeElapsed": timerend-timerstart}

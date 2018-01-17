@@ -1,17 +1,21 @@
 import cv2
 import statistics
 import numpy
+from itertools  import compress
 
 
 
-def mFilter(matches, kp1, kp2, toleranceDegrees=5):
+def mFilter(matches, kp1, kp2, toleranceDegrees=1):
     # entfernt alle matches, deren verbindungslinien zu stark vom Medianwinkel abweichen
     # Precondition: Matches müssen zwingend sortiert sein
+    # Damit es mit L+R wie auch mit Einseitig sequentiell geschossenen Bildern funktioniert,
+    # werden die Winkel der Linien berechnet, wie sie auch in den Anzeige dargestellt werden,
+    # wenn beide Bilder nebeneinander liegen. Img-Dimesnion 4096x3000
 
     # Initialize lists
     list_kp1 = []
     list_kp2 = []
-    list_m   = []
+    list_m = []
 
     # For each match...
     for mat in matches:
@@ -28,23 +32,31 @@ def mFilter(matches, kp1, kp2, toleranceDegrees=5):
         # Append to each list
         list_kp1.append((x1, y1))
         list_kp2.append((x2, y2))
-        list_m.append((y2-y1)/(x2-1))
+        list_m.append((y2-y1)/(x2-x1+4097))
 
+    winkel = numpy.arctan(list_m)
+    winkel = numpy.rad2deg(winkel)
 
-    list_m = numpy.arctan(list_m)
-    m = statistics.median(list_m)
-    tolerance = toleranceDegrees / 180 * numpy.pi
+    #Von den obersten 10% der Matches den median-Winkel ermitteln
+    topten = winkel[:int(winkel.__len__() / 10)]
+    referenzWinkel = statistics.median(topten)
+    # print(*topten, sep='\n')
+    print("referenzWinkel  =  " + str(referenzWinkel))
 
-    list_m = [x for x in list_m if abs(m-x) < (tolerance)]
-
-# todo aus der bereinigten list_m die matches entsprechend filtern.
+    # Maske erstellen anhand der Maske die Matches filtern
+    maske = [(abs(referenzWinkel-x) < toleranceDegrees) for x in winkel]
+    newmatches = compress(matches, maske)
+    newmatches = list(newmatches)   # geht sonst nach einem zugriff verloren
+    mfilterinfo = "Anzahl gefilterte / ungefilterte Matches mit Toleranz " + str(toleranceDegrees) + "°: "
+    mfilterinfo += str(newmatches.__len__()) + " / " + str(matches.__len__())
+    print(mfilterinfo)
 
     if 0 == 1:
         import matplotlib.pyplot as plt
-        plt.hist(list_m, bins='auto')  # arguments are passed to np.histogram
+        plt.hist(winkel, bins='auto')  # arguments are passed to np.histogram
         plt.title("Histogram with 'auto' bins")
         plt.show()
 
-    return matches
+    return newmatches, mfilterinfo
 
 
