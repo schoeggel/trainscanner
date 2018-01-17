@@ -10,7 +10,7 @@ from random import shuffle
 
 standardfile = 'tmp/cfg-test-2017-12-0100000001.ini'
 
-def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="undefined"):
+def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="undefined", bildnr="undefined"):
     # Verarbeitet eine .ini Datei und führt die Verarbeitungskette durch
     # gemäss den in der .ini Datei definierten Parametern. Return=Resultate ausser Bild
     # Das Bild selber wird (falls angegeben) in den Ordner 'imgoutpath' gespeichert.
@@ -71,8 +71,15 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
     elif detectortype == "goodfeaturestotrack":
         if not background:
             print("using", detectortype)
-            # todo: implement
+            # todo: implement cv2.GFTTDetector_create() ...
             print("unfertig")
+
+    elif detectortype == "fast":
+        if not background:
+            print("using", detectortype)
+        detect = cv2.FastFeatureDetector_create(c.get('threshold'),
+                                                c.get('fast_nonmaxSuppression'),
+                                                c.get('scale'))    # scale für Type 0,1,2
 
     else:
         errmsg = "Unknown algorithm '" + detectortype + "'."
@@ -136,14 +143,24 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
 
     if imgoutpath is not None:
         cfg = ini['file']
-        dst = imgoutpath + cfg['name'] + ".jpg"
+        dst = imgoutpath + cfg['name']
         print("writing image to file:")
-        print(dst)
-        util.writeLQjpg(img5, dst, inifile, [mfilterinfo])
+        print(dst + ".jpg")
+        util.writeLQjpg(img5, dst + ".jpg", inifile, [mfilterinfo, "img:" + bildnr])
 
-    # todo: Dummie Return ersetzen
+        # benötigte Anagaben: bildnr, seiteLRS[L|R|S], config, detectortype, descriptortype, totalmatches, filteredmatches
+        util.writeCSV(dst + ".csv",
+                      bildnr,
+                      seiteLRS,
+                      ini['file']['name'],
+                      ini['detector']['type'],
+                      ini['extractor']['type'],
+                      str(matches.__len__()),
+                      str(newmatches.__len__()),
+                      timer()-timerstart)
+        # todo: Dummie Return ersetzen
     timerend = timer()
-    return {"Errors" : None, "Result": "ok", "TimeElapsed": timerend-timerstart}
+    return {"Errors": None, "Result": "ok", "TimeElapsed": timerend-timerstart}
 
 
 

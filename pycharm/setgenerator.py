@@ -186,6 +186,21 @@ parameters = [
          freak_scalenormalized=[None],
          futureArgument1=[None]),
 
+    Ntup(type=['FAST'],
+         maxfeatures=[None],
+         threshold=[10, 20, 60],
+         levels=[None],
+         octaves=[None],
+         octaveLayers=[None],
+         scale=[0, 1, 2],                       # FAST Type (5_8  / 7_12  / 9_16)
+         fast_nonmaxSuppression=[0, 1],         # default true
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
     Ntup(type=[None],
          maxfeatures=[None],
          threshold=[None],

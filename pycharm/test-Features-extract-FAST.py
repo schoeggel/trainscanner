@@ -9,11 +9,18 @@ img = cv2.imread(f, 0)
 imc = cv2.imread(f)
 
 
-fast = cv2.FastFeatureDetector_create()
+fast = cv2.FastFeatureDetector_create(10,1,2)
 freakExtractor = cv2.xfeatures2d.FREAK_create()
 
-
 keypoints1 = fast.detect(img)
+# Print all default params
+print("Threshold: ", fast.getThreshold())
+print("nonmaxSuppression: ", fast.getNonmaxSuppression())
+print("Type: ", fast.getType())
+print("Total Keypoints with nonmaxSuppression: ", len(keypoints1))
+
+
+
 descriptors = freakExtractor.compute(img, keypoints1)
 
 

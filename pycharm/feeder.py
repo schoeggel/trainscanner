@@ -25,7 +25,7 @@ else:
 try:
     results = cvprocesssor.cvprocess(img1,
                                      img2,
-                                     'cfg/process/processtest5.ini', 'tmp/', seiteLRS)
+                                     'cfg/process/processtest6.ini', 'tmp/', seiteLRS, bildnr)
 except Exception as detail:
     print(detail)
     results = ('ERROR', str(detail))

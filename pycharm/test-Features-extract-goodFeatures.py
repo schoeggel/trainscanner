@@ -9,6 +9,8 @@ f = "img/13L.png"
 img = cv2.imread(f, 0)
 imc = cv2.imread(f)
 
+cn = cv2.GFTTDetector_create()
+
 corners = cv2.goodFeaturesToTrack(img, 1000, 0.05, 25)
 corners = np.float32(corners)
 

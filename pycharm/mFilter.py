@@ -4,6 +4,9 @@ import numpy
 from itertools  import compress
 
 
+# todo: dFilter Methode schreiben, die im Falle einer einseitigen Sequenz
+# todo: nebst dem winkel auch abstand der kps zwischen den bildern prüft.
+# todo: FAST generiert aktuell viele falsche positiven auf dem richtigen winkel.
 
 def mFilter(matches, kp1, kp2, toleranceDegrees=1):
     # entfernt alle matches, deren verbindungslinien zu stark vom Medianwinkel abweichen

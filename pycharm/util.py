@@ -3,7 +3,7 @@ import scipy.io.matlab
 from ruamel.yaml import YAML
 import configparser
 import cv2
-
+import csv
 
 
 def saveconfig(filename, dic, structname='python'):
@@ -116,5 +116,10 @@ def writeLQjpg(im, dst, header='', moretext = ''):
         moretextStart += 80
 
     # Speichern
-    cv2.imwrite(dst, im, [cv2.IMWRITE_JPEG_QUALITY, 10])
+    cv2.imwrite(dst, im, [cv2.IMWRITE_JPEG_QUALITY, 12])
 
+def writeCSV(dst, bildnr, seiteLRS, config, detectortype, descriptortype, totalmatches, filteredmatches, time):
+    # benötigte Anagaben: bildnr, seiteLRS[L|R|S], config, detectortype, descriptortype, totalmatches, filteredmatches
+    with open(dst, 'w', newline='') as csvfile:
+        spamwriter = csv.writer(csvfile,  dialect='excel', delimiter=';')
+        spamwriter.writerow([dst, bildnr, seiteLRS, config, detectortype, descriptortype, totalmatches, filteredmatches, time])
