@@ -8,7 +8,7 @@ from itertools  import compress
 # todo: nebst dem winkel auch abstand der kps zwischen den bildern prüft.
 # todo: FAST generiert aktuell viele falsche positiven auf dem richtigen winkel.
 
-def mFilter(matches, kp1, kp2, toleranceDegrees=1):
+def mFilter(matches, kp1, kp2, tolerancedegrees=1):
     # entfernt alle matches, deren verbindungslinien zu stark vom Medianwinkel abweichen
     # Precondition: Matches müssen zwingend sortiert sein
     # Damit es mit L+R wie auch mit Einseitig sequentiell geschossenen Bildern funktioniert,
@@ -47,17 +47,17 @@ def mFilter(matches, kp1, kp2, toleranceDegrees=1):
     print("referenzWinkel  =  " + str(referenzWinkel))
 
     # Maske erstellen anhand der Maske die Matches filtern
-    maske = [(abs(referenzWinkel-x) < toleranceDegrees) for x in winkel]
+    maske = [(abs(referenzWinkel-x) < tolerancedegrees) for x in winkel]
     newmatches = compress(matches, maske)
     newmatches = list(newmatches)   # geht sonst nach einem zugriff verloren
-    mfilterinfo = "Anzahl gefilterte / ungefilterte Matches mit Toleranz " + str(toleranceDegrees) + "°: "
+    mfilterinfo = "mFilter before/after (tolerance=" + str(tolerancedegrees) + " deg): "
     mfilterinfo += str(newmatches.__len__()) + " / " + str(matches.__len__())
     print(mfilterinfo)
 
     if 0 == 1:
         import matplotlib.pyplot as plt
         plt.hist(winkel, bins='auto')  # arguments are passed to np.histogram
-        plt.title("Histogram with 'auto' bins")
+        plt.title("winkel (deg) with 'auto' bins")
         plt.show()
 
     return newmatches, mfilterinfo

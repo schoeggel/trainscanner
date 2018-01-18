@@ -15,6 +15,8 @@ star = cv2.xfeatures2d.StarDetector_create()
 #surf = cv2.xfeatures2d.SURF_create()
 freakExtractor = cv2.xfeatures2d.FREAK_create()
 
+
+
 keypoints1 = star.detect(img)
 descriptors = freakExtractor.compute(img, keypoints1)
 

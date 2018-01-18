@@ -16,7 +16,7 @@ import collections
 import itertools
 import datetime
 import configparser
-
+from random import shuffle
 
 
 def rejectConfig(configList):
@@ -98,6 +98,35 @@ parameters = [
          freak_scalenormalized=[None],
          futureArgument1=[None]),
 
+    Ntup(type=['FAST'],
+         maxfeatures=[None],
+         threshold=[10, 20, 60],
+         levels=[None],
+         octaves=[None],
+         octaveLayers=[None],
+         scale=[0, 1, 2],  # FAST Type (5_8  / 7_12  / 9_16)
+         fast_nonmaxSuppression=[0, 1],  # default true
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
+
+    Ntup(type=['STAR'],
+         maxfeatures=[None],
+         threshold=[15, 30, 60],            #default 30
+         levels=[None],
+         octaves=[None],
+         octaveLayers=[None],
+         scale=[4, 16, 32],                 # STAR: MaxSize
+         fast_nonmaxSuppression=[2, 5, 12], # auch für star, dafault = 5
+         mser_delta=[None],
+         orb_WTAK=[None],
+         extended=[None],
+         upright=[None],
+         freak_scalenormalized=[None],
+         futureArgument1=[None]),
 
     Ntup(type=[None],
          maxfeatures=[None],
@@ -156,28 +185,13 @@ parameters = [
          freak_scalenormalized=[None],
          futureArgument1=[None]),
 
-    Ntup(type=['SURF'],
-         maxfeatures=[None],
-         threshold=[300, 450, 1000],
-         levels=[None],
-         octaves=[4, 8, 12],  # default = 4
-         octaveLayers=[2, 4],  # default = 2
-         scale=[None],
-         fast_nonmaxSuppression=[None],
-         mser_delta=[None],
-         orb_WTAK=[None],
-         extended=[0, 1],
-         upright=[0, 1],
-         freak_scalenormalized=[None],
-         futureArgument1=[None]),
-
     Ntup(type=['FREAK'],
          maxfeatures=[None],
          threshold=[None],
          levels=[None],
-         octaves=[None],
+         octaves=[2, 4, 6],
          octaveLayers=[None],
-         scale=[None],
+         scale=[22.0, 41.0, 67.0],
          fast_nonmaxSuppression=[None],
          mser_delta=[None],
          orb_WTAK=[None],
@@ -186,22 +200,7 @@ parameters = [
          freak_scalenormalized=[None],
          futureArgument1=[None]),
 
-    Ntup(type=['FAST'],
-         maxfeatures=[None],
-         threshold=[10, 20, 60],
-         levels=[None],
-         octaves=[None],
-         octaveLayers=[None],
-         scale=[0, 1, 2],                       # FAST Type (5_8  / 7_12  / 9_16)
-         fast_nonmaxSuppression=[0, 1],         # default true
-         mser_delta=[None],
-         orb_WTAK=[None],
-         extended=[None],
-         upright=[None],
-         freak_scalenormalized=[None],
-         futureArgument1=[None]),
-
-    Ntup(type=[None],
+     Ntup(type=[None],
          maxfeatures=[None],
          threshold=[None],
          levels=[None],
@@ -239,12 +238,13 @@ sectioncontrol = list(zip(sectionids, sectionnames, fieldnames))
 
 # Outputfile schreiben
 verb = True         # Zeigt jeden Datainamen in der Console an.
-dryrun = False       # ohne Dateien zu schreiben.
+dryrun = True       # ohne Dateien zu schreiben.
 configfile_dir = "tmp/"
 configfile_basename = "cfg-test-" + datestring
 configfile_root = configfile_dir + configfile_basename
 filecounterWritten = 0
 filecounterSkipped = 0
+shuffle(masterlist)     # Fehler werden früher erkannt in der Batchverarbeitung
 for oneconfig in masterlist:
     if rejectConfig(oneconfig):
         if verb:

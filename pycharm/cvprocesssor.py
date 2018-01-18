@@ -4,6 +4,7 @@ import configparser
 from timeit import default_timer as timer
 import util
 import mFilter
+import dFilter
 import matplotlib.pyplot as plt
 from random import shuffle
 
@@ -68,11 +69,15 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
                                              c.get('extended'),
                                              c.get('upright'))
 
-    elif detectortype == "goodfeaturestotrack":
+    elif detectortype == "star":
         if not background:
             print("using", detectortype)
-            # todo: implement cv2.GFTTDetector_create() ...
-            print("unfertig")
+        detect = cv2.xfeatures2d_StarDetector.create(c.get('scale'),                    # maxSize
+                                                     c.get('threshold'),                # responseThreshold
+                                                     10,                                # default
+                                                     8,                                 # default
+                                                     c.get('fast_nonmaxSuppression'))   # suppressNonmaxSize
+
 
     elif detectortype == "fast":
         if not background:
@@ -102,12 +107,24 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
         if not background:
             print("using", detectortype)
         describe = cv2.BRISK_create(c.get('threshold'),
-                                  c.get('octaves'),
-                                  c.get('scale'))
+                                    c.get('octaves'),
+                                    c.get('scale'))
 
+    if detectortype == "orb":
+        if not background:
+            print("using", detectortype)
+            cv2.ORB_create()
+        describe = cv2.ORB_create(c.get('maxfeatures'),
+                                  c.get('scale'),
+                                  c.get('levels'),
+                                  edgeThreshold=25,
+                                  WTA_K=c.get('orb_wtak'))
 
-    #dummie:
-    describe = cv2.xfeatures2d.FREAK_create()
+    if detectortype == "freak":
+        if not background:
+            print("using", detectortype)
+        describe = cv2.xfeatures2d_FREAK.create(patternScale=c.get('scale'),
+                                                nOctaves=c.get('octaves'))
 
     # descriptors
     kp1, des1 = describe.compute(img1, kp1)
@@ -121,12 +138,17 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
     matches = bf.match(des1, des2)
 
     # Geht nur wenn sequentiell verglichen wird: Filtern nach Parallelität der Matches
+    # todo berechnen wie gross d abweichung sein darf bei erhöhten objekten auf dem dach.
+    # todo ein teil, das 50cm überragt wird ein vom median abweichendes d haben
     if seiteLRS == "L" or seiteLRS == "R":
         matches = sorted(matches, key=lambda x: x.distance)
         newmatches, mfilterinfo = mFilter.mFilter(matches, kp1, kp2, 0.1)
+        newmatches, dfilterinfo = dFilter.dFilter(newmatches, kp1, kp2, 25)
+
     else:
         newmatches = None
         mfilterinfo = "no mFilter"
+        dfilterinfo = "no dFilter"
 
     # zufällige n Matches einzeichnen.
     n = 75
@@ -146,7 +168,8 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
         dst = imgoutpath + cfg['name']
         print("writing image to file:")
         print(dst + ".jpg")
-        util.writeLQjpg(img5, dst + ".jpg", inifile, [mfilterinfo, "img:" + bildnr])
+        headertext = inifile + ': ' + ini['detector']['type'] + '/' + ini['extractor']['type']
+        util.writeLQjpg(img5, dst + ".jpg", headertext, [mfilterinfo, dfilterinfo, "img:" + bildnr])
 
         # benötigte Anagaben: bildnr, seiteLRS[L|R|S], config, detectortype, descriptortype, totalmatches, filteredmatches
         util.writeCSV(dst + ".csv",
