@@ -118,8 +118,13 @@ def writeLQjpg(im, dst, header='', moretext = ''):
     # Speichern
     cv2.imwrite(dst, im, [cv2.IMWRITE_JPEG_QUALITY, 15])
 
-def writeCSV(dst, bildnr, seiteLRS, config, detectortype, descriptortype, totalmatches, filteredmatches, time):
+def writeCSV(dst, bildnr, seiteLRS, ini, totalmatches, mfilteredmatches, dfilteredmatches, time):
     # benötigte Anagaben: bildnr, seiteLRS[L|R|S], config, detectortype, descriptortype, totalmatches, filteredmatches
     with open(dst, 'w', newline='') as csvfile:
+        data = [dst, bildnr, seiteLRS, totalmatches, mfilteredmatches, dfilteredmatches, time]
+        for each_section in ini.sections():
+            for (each_key, each_val) in ini.items(each_section):
+                data.append(each_val)
+
         f = csv.writer(csvfile,  dialect='excel', delimiter=';')
-        f.writerow([dst, bildnr, seiteLRS, config, detectortype, descriptortype, totalmatches, filteredmatches, time])
+        f.writerow(data)

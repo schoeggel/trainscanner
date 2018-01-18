@@ -142,11 +142,11 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
     # todo ein teil, das 50cm überragt wird ein vom median abweichendes d haben
     if seiteLRS == "L" or seiteLRS == "R":
         matches = sorted(matches, key=lambda x: x.distance)
-        newmatches, mfilterinfo = mFilter.mFilter(matches, kp1, kp2, 0.1)
-        newmatches, dfilterinfo = dFilter.dFilter(newmatches, kp1, kp2, 25)
+        mfiltermatches, mfilterinfo = mFilter.mFilter(matches, kp1, kp2, 0.1)
+        dfiltermatches, dfilterinfo = dFilter.dFilter(mfiltermatches, kp1, kp2, 25)
 
     else:
-        newmatches = None
+        dfiltermatches = None
         mfilterinfo = "no mFilter"
         dfilterinfo = "no dFilter"
 
@@ -156,9 +156,9 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
     # img4 = cv2.drawMatches(img1, kp1, img2, kp2, matches[:n], None, flags=2)
     # plt.imshow(img4), plt.show()
 
-    if newmatches:
-        shuffle(newmatches)
-        img5 = cv2.drawMatches(img1, kp1, img2, kp2, newmatches[:n], None, flags=2)
+    if dfiltermatches:
+        shuffle(dfiltermatches)
+        img5 = cv2.drawMatches(img1, kp1, img2, kp2, dfiltermatches[:n], None, flags=2)
         # plt.imshow(img5), plt.show()
     else:
         img5 = cv2.drawMatches(img1, kp1, img2, kp2, matches[:n], None, flags=2)
@@ -175,11 +175,10 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
         util.writeCSV(dst + ".csv",
                       bildnr,
                       seiteLRS,
-                      ini['file']['name'],
-                      ini['detector']['type'],
-                      ini['extractor']['type'],
+                      ini,
                       str(matches.__len__()),
-                      str(newmatches.__len__()),
+                      str(mfiltermatches.__len__()),
+                      str(dfiltermatches.__len__()),
                       timer()-timerstart)
         # todo: Dummie Return ersetzen
     timerend = timer()

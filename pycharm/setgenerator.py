@@ -23,6 +23,7 @@ def rejectConfig(configList):
     # Liefert true, wenn die Konfigurations verworfen werden soll.
     # Bspw. wenn Desktriptor und Extraktor Typen gleich sind, aber ihre Parameter nicht.
     # Die Typen sind in den Arrays 0 und 1 an erster Stelle gespeichert. [0][0] und [1][0] sind die Typen
+    # None-Typen kommen nicht bis hierher, keine Prüfung nötig
 
     # Die Typen sind unterschiedlich --> Keine Optimierung möglich
     if configList[0][0] != configList[1][0]:
