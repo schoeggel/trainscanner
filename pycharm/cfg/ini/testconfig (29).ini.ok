@@ -1,0 +1,36 @@
+[file]
+configfile = tmp/cfg-test-2018-01-1800000529.ini
+name = cfg-test-2018-01-1800000529
+
+[detector]
+type = SURF
+maxfeatures = None
+threshold = 450
+levels = None
+octaves = 4
+octavelayers = 4
+scale = None
+fast_nonmaxsuppression = None
+mser_delta = None
+orb_wtak = None
+extended = 1
+upright = 1
+freak_scalenormalized = None
+futureargument1 = None
+
+[extractor]
+type = ORB
+maxfeatures = 10000
+threshold = None
+levels = 16
+octaves = None
+octavelayers = None
+scale = 1.5
+fast_nonmaxsuppression = None
+mser_delta = None
+orb_wtak = 4
+extended = None
+upright = None
+freak_scalenormalized = None
+futureargument1 = None
+
