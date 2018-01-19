@@ -7,7 +7,7 @@
 import cv2
 import cvprocesssor
 import os
-
+from timeit import default_timer as timer
 
 def feedsingle(inifile):
     # Lässt den cvprocessor mit einer angebenen ini durchlaufen
@@ -68,8 +68,10 @@ for f in os.listdir(inifolder):
 
 print("found ini:")
 print(allinifiles)
+
+tstart = timer()
 for f in allinifiles:
     feedsingle(f)
 
-
+print(f.__len__(), " files processed in", timer()-tstart, " seconds\n")
 

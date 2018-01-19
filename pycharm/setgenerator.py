@@ -239,9 +239,9 @@ sectioncontrol = list(zip(sectionids, sectionnames, fieldnames))
 
 # Outputfile schreiben
 verb = True         # Zeigt jeden Datainamen in der Console an.
-dryrun = True       # ohne Dateien zu schreiben.
-configfile_dir = "tmp/"
-configfile_basename = "cfg-test-" + datestring
+dryrun = False       # ohne Dateien zu schreiben.
+configfile_dir = "cfg/ini-batch1/"
+configfile_basename = "cfg-batch1-" + datestring
 configfile_root = configfile_dir + configfile_basename
 filecounterWritten = 0
 filecounterSkipped = 0

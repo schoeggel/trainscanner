@@ -9,6 +9,7 @@ import cvprocesssor
 import os
 import numpy as np
 from multiprocessing.dummy import Pool as ThreadPool
+from timeit import default_timer as timer
 
 
 
@@ -16,9 +17,9 @@ from multiprocessing.dummy import Pool as ThreadPool
 bildnr = "13"
 bildfolder = "img/"         # Verzeichnis mit den Zugbildern
 seiteLRS = "L"              # Links / Rechts / Stereo
-inifolder = "cfg/ini/"      # Verzeichnis mit alle .ini Files
-outputfolder = "tmp/"       # Verzeichnis für match-jpg und csv
-threads = 1                     # Anzahl Thrads
+inifolder = "cfg/ini-batch1/"      # Verzeichnis mit alle .ini Files
+outputfolder = "batch1-2/"       # Verzeichnis für match-jpg und csv
+threads = 12                     # Anzahl Threads
 
 
 def feedsingle(inifile):
@@ -80,6 +81,8 @@ print(allinifiles)
 # chunks = np.array_split(allinifiles, threads)
 
 
+tstart = timer()
+
 # make the Pool of workers
 pool = ThreadPool(threads)
 
@@ -89,5 +92,7 @@ results = pool.map(feedsingle, allinifiles)
 # close the pool and wait for the work to finish
 pool.close()
 pool.join()
+
+print(f.__len__(), " files processed in", timer()-tstart, " seconds\n")
 
 

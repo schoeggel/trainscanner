@@ -1,5 +1,6 @@
 #own
 tmp/
+batch1-all/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
