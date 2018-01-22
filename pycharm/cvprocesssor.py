@@ -1,17 +1,35 @@
 import os
 import cv2
+import numpy as np
 import configparser
 from timeit import default_timer as timer
 import util
 import mFilter
 import dFilter
+import cvMatrix
 import matplotlib.pyplot as plt
 from random import shuffle
 
-
 standardfile = 'tmp/cfg-test-2017-12-0100000001.ini'
 
-def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="undefined", bildnr="undefined"):
+def drawlines(img1,img2,lines,pts1,pts2):
+    """ img1 - image on which we draw the epilines for the points in img2
+        lines - corresponding epilines
+        source: https://docs.opencv.org/3.2.0/da/de9/tutorial_py_epipolar_geometry.html"""
+    r, c = img1.shape
+    img1 = cv2.cvtColor(img1, cv2.COLOR_GRAY2BGR)
+    img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+    for r, pt1, pt2 in zip(lines, pts1, pts2):
+        color = tuple(np.random.randint(0, 255, 3).tolist())
+        x0, y0 = map(int, [0, -r[2] / r[1]])
+        x1, y1 = map(int, [c, -(r[2] + r[0] * c) / r[1]])
+        img1 = cv2.line(img1, (x0, y0), (x1, y1), color, 1)
+        img1 = cv2.circle(img1, tuple(pt1), 5, color, -1)
+        img2 = cv2.circle(img2, tuple(pt2), 5, color, -1)
+    return img1, img2
+
+
+def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="undefined", bildnr="undefined"):
     # Verarbeitet eine .ini Datei und führt die Verarbeitungskette durch
     # gemäss den in der .ini Datei definierten Parametern. Return=Resultate ausser Bild
     # Das Bild selber wird (falls angegeben) in den Ordner 'imgoutpath' gespeichert.
@@ -162,6 +180,35 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath = None, seiteLRS="u
             # plt.imshow(img5), plt.show()
         else:
             img5 = cv2.drawMatches(img1, kp1, img2, kp2, matches[:n], None, flags=2)
+
+        # F ========================================================================
+        # billige abkürzung zum testen
+        pts1 = []
+        pts2 = []
+        matches = sorted(matches, key=lambda x: x.distance)
+        good = matches[:5000]
+        for match in good:
+            pts2.append(kp2[match.trainIdx].pt)
+            pts1.append(kp1[match.queryIdx].pt)
+
+        pts1 = np.int32(pts1)
+        pts2 = np.int32(pts2)
+        # F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
+        F = cvMatrix.fundamental()
+
+        # Find epilines corresponding to points in right image (second image) and
+        # drawing its lines on left image
+        lines1 = cv2.computeCorrespondEpilines(pts2.reshape(-1, 1, 2), 2, F)
+        lines1 = lines1.reshape(-1, 3)
+        img8, img9 = drawlines(img1, img2, lines1, pts1, pts2)
+        # Find epilines corresponding to points in left image (first image) and
+        # drawing its lines on right image
+        lines2 = cv2.computeCorrespondEpilines(pts1.reshape(-1, 1, 2), 1, F)
+        lines2 = lines2.reshape(-1, 3)
+        img10, img11 = drawlines(img2, img1, lines2, pts2, pts1)
+        plt.subplot(121), plt.imshow(img8)
+        plt.subplot(122), plt.imshow(img10)
+        plt.show()
 
 
 

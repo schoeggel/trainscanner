@@ -8,8 +8,8 @@ import cv2
 import cvprocesssor
 
 # Bilder laden (Ein Bild nur einmal laden für alle .ini Files)
-bildnr = "13"
-seiteLRS = "L"  # Links / Rechts / Stereo
+bildnr = "12"
+seiteLRS = "S"  # Links / Rechts / Stereo
 
 if seiteLRS == "S":
     imc1 = cv2.imread("img/" + bildnr + "L.png")
@@ -25,7 +25,7 @@ else:
 try:
     results = cvprocesssor.cvprocess(img1,
                                      img2,
-                                     'cfg/process/processtest6.ini', 'tmp/', seiteLRS, bildnr)
+                                     'cfg/process/processtop1.ini', 'tmp/', seiteLRS, bildnr)
 except Exception as detail:
     print(detail)
     results = ('ERROR', str(detail))
