@@ -1,0 +1,39 @@
+import cv2
+
+# original code from P4 Trainscanner FeatureFilter.cpp (C) Brütsch Tobias / Burri Marcel
+
+def reprojectionErrorFromLines(line1, line2, point1, point2):
+    a2 = line2[0]   # epipolar line
+    b2 = line2[1]
+    c2 = line2[2]
+    norm_factor2 = (a2**2 + b2**2)**0.5
+
+    a1 = line1[0]
+    b1 = line1[1]
+    c1 = line1[2]
+    norm_factor1 = (a1**2 + b1**2)**0.5
+
+    return abs(point1.x * a2 + point1.y * b2 + c2) / norm_factor2 + abs(point2.x * a1 + point2.y * b1 + c1) / norm_factor1;
+
+
+def filterReprojectionError(matches, F, maxDistance, pts1, pts2):
+    lines1 = cv2.computeCorrespondEpilines(pts1.reshape(-1, 1, 2), 1, F)
+    lines2 = cv2.computeCorrespondEpilines(pts2.reshape(-1, 1, 2), 2, F)
+    lines1 = lines1.reshape(-1, 3)
+    lines2 = lines2.reshape(-1, 3)
+    goodMatches=[]
+
+    for i, match in matches:
+       if abs(reprojectionErrorFromLines(lines1[i], lines2[i], pts1[i], pts2[i])) < maxDistance:
+           goodMatches.append(match)
+
+
+"""
+# c++ code:
+    for (int i = 0; i < matches.size(); i++) {
+        if (std::
+            abs(reprojectionErrorFromLines(lines1[i], lines2[i], imgpts1[i], imgpts2[i])) < maxDistance) {
+                goodMatches.push_back(matches[i]);    }
+    }
+    matches = goodMatches;
+"""
