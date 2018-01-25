@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ffc4caf-fe53-4954-8424-16d2155e0367" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/cvMatrix.py" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/delaunay.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/cfg/process/processtest5.ini" afterPath="$PROJECT_DIR$/cfg/process/processtest5.ini" />
-      <change beforePath="$PROJECT_DIR$/cfg/process/processtest6.ini" afterPath="$PROJECT_DIR$/cfg/process/processtest6.ini" />
-      <change beforePath="$PROJECT_DIR$/cvprocesssor.py" afterPath="$PROJECT_DIR$/cvprocesssor.py" />
-      <change beforePath="$PROJECT_DIR$/feeder.py" afterPath="$PROJECT_DIR$/feederManual.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,7 +17,7 @@
       <file leaf-file-name="setgenerator.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/setgenerator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
+            <state relative-caret-position="0">
               <caret line="240" column="10" lean-forward="false" selection-start-line="240" selection-start-column="10" selection-end-line="240" selection-end-column="10" />
               <folding>
                 <marker date="1516303288509" expanded="true" signature="9873:9874" ph="..." />
@@ -35,7 +30,7 @@
         <entry file="file://$PROJECT_DIR$/feederManual.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="425">
-              <caret line="26" column="42" lean-forward="true" selection-start-line="26" selection-start-column="42" selection-end-line="26" selection-end-column="42" />
+              <caret line="26" column="42" lean-forward="false" selection-start-line="26" selection-start-column="42" selection-end-line="26" selection-end-column="42" />
               <folding />
             </state>
           </provider>
@@ -44,8 +39,8 @@
       <file leaf-file-name="cvprocesssor.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cvprocesssor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="210" column="18" lean-forward="true" selection-start-line="210" selection-start-column="18" selection-end-line="210" selection-end-column="18" />
+            <state relative-caret-position="340">
+              <caret line="206" column="38" lean-forward="true" selection-start-line="206" selection-start-column="38" selection-end-line="206" selection-end-column="38" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -66,8 +61,8 @@
       <file leaf-file-name="feederMultiCore.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/feederMultiCore.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="27" column="16" lean-forward="true" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
+            <state relative-caret-position="374">
+              <caret line="27" column="16" lean-forward="false" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
               <folding>
                 <element signature="e#283#293#0" expanded="true" />
               </folding>
@@ -148,6 +143,7 @@
         <option value="$PROJECT_DIR$/cvMatrix.py" />
         <option value="$PROJECT_DIR$/feederManual.py" />
         <option value="$PROJECT_DIR$/cvprocesssor.py" />
+        <option value="$PROJECT_DIR$/delaunay.py" />
       </list>
     </option>
   </component>
@@ -192,8 +188,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -216,6 +210,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -248,7 +244,25 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.feederManual">
+  <component name="RunManager" selected="Python.delaunay">
+    <configuration name="delaunay" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="pycharm" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/delaunay.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="feeder" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -339,39 +353,21 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="test-Features-extract-Star-Marker" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="pycharm" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test-Features-extract-Star-Marker.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Python.setgenerator" />
       <item index="1" class="java.lang.String" itemvalue="Python.feeder" />
-      <item index="2" class="java.lang.String" itemvalue="Python.test-Features-extract-Star-Marker" />
-      <item index="3" class="java.lang.String" itemvalue="Python.feederSingleCore" />
-      <item index="4" class="java.lang.String" itemvalue="Python.feederMultiCore" />
-      <item index="5" class="java.lang.String" itemvalue="Python.feederManual" />
+      <item index="2" class="java.lang.String" itemvalue="Python.feederSingleCore" />
+      <item index="3" class="java.lang.String" itemvalue="Python.feederMultiCore" />
+      <item index="4" class="java.lang.String" itemvalue="Python.feederManual" />
+      <item index="5" class="java.lang.String" itemvalue="Python.delaunay" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.feederManual" />
-        <item index="1" class="java.lang.String" itemvalue="Python.feederMultiCore" />
-        <item index="2" class="java.lang.String" itemvalue="Python.feederSingleCore" />
-        <item index="3" class="java.lang.String" itemvalue="Python.feeder" />
-        <item index="4" class="java.lang.String" itemvalue="Python.test-Features-extract-Star-Marker" />
+        <item index="0" class="java.lang.String" itemvalue="Python.delaunay" />
+        <item index="1" class="java.lang.String" itemvalue="Python.feederManual" />
+        <item index="2" class="java.lang.String" itemvalue="Python.feederMultiCore" />
+        <item index="3" class="java.lang.String" itemvalue="Python.feederSingleCore" />
+        <item index="4" class="java.lang.String" itemvalue="Python.feeder" />
       </list>
     </recent_temporary>
   </component>
@@ -406,7 +402,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2171875" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942554" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19343494" sideWeight="0.5125601" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45603752" sideWeight="0.48743987" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4557316" sideWeight="0.48743987" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44268405" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27667058" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24960339" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -550,7 +546,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/tmp/cfg-test-2017-12-0100000002.ini" />
     <entry file="file://$PROJECT_DIR$/tmp/cfg-test-2017-12-0200000015.ini" />
     <entry file="file://$PROJECT_DIR$/tmp/cfg-test-2017-12-0200000008.ini" />
     <entry file="file://$PROJECT_DIR$/cfg/process/processtest2.ini">
@@ -649,15 +644,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="4" lean-forward="false" selection-start-line="0" selection-start-column="4" selection-end-line="0" selection-end-column="4" />
-          <folding>
-            <element signature="e#283#293#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/setgenerator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
+        <state relative-caret-position="0">
           <caret line="240" column="10" lean-forward="false" selection-start-line="240" selection-start-column="10" selection-end-line="240" selection-end-column="10" />
           <folding>
             <marker date="1516303288509" expanded="true" signature="9873:9874" ph="..." />
@@ -669,7 +661,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -677,14 +668,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
           <caret line="4" column="10" lean-forward="true" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/feederMultiCore.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="27" column="16" lean-forward="true" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
+        <state relative-caret-position="374">
+          <caret line="27" column="16" lean-forward="false" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
           <folding>
             <element signature="e#283#293#0" expanded="true" />
           </folding>
@@ -703,22 +693,31 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
           <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/feederManual.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
-          <caret line="26" column="42" lean-forward="true" selection-start-line="26" selection-start-column="42" selection-end-line="26" selection-end-column="42" />
+          <caret line="26" column="42" lean-forward="false" selection-start-line="26" selection-start-column="42" selection-end-line="26" selection-end-column="42" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/delaunay.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="105" column="31" lean-forward="true" selection-start-line="105" selection-start-column="31" selection-end-line="105" selection-end-column="31" />
+          <folding>
+            <element signature="e#274#290#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cvprocesssor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="210" column="18" lean-forward="true" selection-start-line="210" selection-start-column="18" selection-end-line="210" selection-end-column="18" />
+        <state relative-caret-position="340">
+          <caret line="206" column="38" lean-forward="true" selection-start-line="206" selection-start-column="38" selection-end-line="206" selection-end-column="38" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
