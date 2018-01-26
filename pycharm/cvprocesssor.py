@@ -6,12 +6,14 @@ from timeit import default_timer as timer
 import util
 import mFilter
 import dFilter
-import cvMatrix
+import calibMatrix
 import matplotlib.pyplot as plt
 from random import shuffle
 import reproFilter
+import calibMatrix
 
 
+cal = calibMatrix.CalibData()  # Alle Matrizen laden: F, intrins., extr.
 standardfile = 'tmp/cfg-test-2017-12-0100000001.ini'
 
 def drawlines(img1,img2,lines,pts1,pts2):
@@ -168,18 +170,18 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
         elif seiteLRS == "S":
             pts1 = []
             pts2 = []
-            good = matches[:10000]
+            good = matches[:50000]
             for match in good:
                 pts2.append(kp2[match.trainIdx].pt)
                 pts1.append(kp1[match.queryIdx].pt)
 
             pts1 = np.int32(pts1)
             pts2 = np.int32(pts2)
-            # F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
-            F = cvMatrix.fundamental()
-            dfiltermatches, dfilterinfo = reproFilter.filterReprojectionError(good, F, 25, pts1, pts2)
+            F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
+            F = cal.f   # todo: .ini getrieben F laden oder ermitteln, errorMaxDistance ebenfalls via .ini
+            dfiltermatches, dfilterinfo = reproFilter.filterReprojectionError(good, F, 5, pts1, pts2)
             mfiltermatches = dfiltermatches
-            mfilterinfo = "no mFilter"
+            mfilterinfo = "bfmatcher matches: " + str(matches.__len__())
 
 
         # zufällige n Matches einzeichnen.
@@ -194,6 +196,16 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
             #plt.imshow(img5), plt.show()
         else:
             img5 = cv2.drawMatches(img1, kp1, img2, kp2, matches[:n], None, flags=2)
+
+
+# TRIANGULATION
+# Punkte müssen im 2xN Format sein und float: l = np.array([[ 304],[ 277]],dtype=np.float)
+# https://stackoverflow.com/questions/46163831/output-3d-points-change-everytime-in-triangulatepoints-using-in-python-2-7-with
+        pts1 = np.array(pts1.transpose(), dtype=np.float)
+        pts2 = np.array(pts2.transpose(), dtype=np.float)
+        test = cv2.triangulatePoints(cal.pl, cal.pr, pts1, pts2)
+        print("Triangulation result:", test.shape)
+        np.save("tmp/3dpoints001.npy", test)
 
 
 

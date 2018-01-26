@@ -116,7 +116,7 @@ def writeLQjpg(im, dst, header='', moretext = ''):
         moretextStart += 80
 
     # Speichern
-    cv2.imwrite(dst, im, [cv2.IMWRITE_JPEG_QUALITY, 80])
+    cv2.imwrite(dst, im, [cv2.IMWRITE_JPEG_QUALITY, 90])
 
 def writeCSV(dst, bildnr, seiteLRS, ini, totalmatches, mfilteredmatches, dfilteredmatches, time):
     with open(dst, 'w', newline='') as csvfile:
