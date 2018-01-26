@@ -9,6 +9,8 @@ import dFilter
 import cvMatrix
 import matplotlib.pyplot as plt
 from random import shuffle
+import reproFilter
+
 
 standardfile = 'tmp/cfg-test-2017-12-0100000001.ini'
 
@@ -154,19 +156,31 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
 
         # Match descriptors.
         matches = bf.match(des1, des2)
+        matches = sorted(matches, key=lambda x: x.distance)
 
         # Geht nur wenn sequentiell verglichen wird: Filtern nach Parallelität der Matches
         # todo berechnen wie gross d abweichung sein darf bei erhöhten objekten auf dem dach.
         # todo ein teil, das 50cm überragt wird ein vom median abweichendes d haben
         if seiteLRS == "L" or seiteLRS == "R":
-            matches = sorted(matches, key=lambda x: x.distance)
             mfiltermatches, mfilterinfo = mFilter.mFilter(matches, kp1, kp2, 0.1)
             dfiltermatches, dfilterinfo = dFilter.dFilter(mfiltermatches, kp1, kp2, 25)
 
-        else:
-            dfiltermatches = None
+        elif seiteLRS == "S":
+            pts1 = []
+            pts2 = []
+            good = matches[:10000]
+            for match in good:
+                pts2.append(kp2[match.trainIdx].pt)
+                pts1.append(kp1[match.queryIdx].pt)
+
+            pts1 = np.int32(pts1)
+            pts2 = np.int32(pts2)
+            # F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
+            F = cvMatrix.fundamental()
+            dfiltermatches, dfilterinfo = reproFilter.filterReprojectionError(good, F, 25, pts1, pts2)
+            mfiltermatches = dfiltermatches
             mfilterinfo = "no mFilter"
-            dfilterinfo = "no dFilter"
+
 
         # zufällige n Matches einzeichnen.
         n = 75
@@ -177,40 +191,9 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
         if dfiltermatches:
             shuffle(dfiltermatches)
             img5 = cv2.drawMatches(img1, kp1, img2, kp2, dfiltermatches[:n], None, flags=2)
-            # plt.imshow(img5), plt.show()
+            #plt.imshow(img5), plt.show()
         else:
             img5 = cv2.drawMatches(img1, kp1, img2, kp2, matches[:n], None, flags=2)
-
-        # F ========================================================================
-        # billige abkürzung zum testen
-        pts1 = []
-        pts2 = []
-        matches = sorted(matches, key=lambda x: x.distance)
-        good = matches[:5]
-        for match in good:
-            pts2.append(kp2[match.trainIdx].pt)
-            pts1.append(kp1[match.queryIdx].pt)
-
-        pts1 = np.int32(pts1)
-        pts2 = np.int32(pts2)
-        #F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
-        F = cvMatrix.fundamental()
-
-        # Find epilines corresponding to points in right image (second image) and
-        # drawing its lines on left image
-        lines1 = cv2.computeCorrespondEpilines(pts2.reshape(-1, 1, 2), 2, F)
-        lines1 = lines1.reshape(-1, 3)
-        img10, img11 = drawlines(img1, img2, lines1, pts1, pts2)
-
-        # Find epilines corresponding to points in left image (first image) and
-        # drawing its lines on right image
-        lines2 = cv2.computeCorrespondEpilines(pts1.reshape(-1, 1, 2), 1, F)
-        lines2 = lines2.reshape(-1, 3)
-        img8, img9 = drawlines(img2, img1, lines2, pts2, pts1)
-        plt.subplot(121), plt.imshow(img10)
-        plt.subplot(122), plt.imshow(img8)
-        plt.show()
-
 
 
 
@@ -246,3 +229,20 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
 
 
 
+
+"""
+        # Find epilines corresponding to points in right image (second image) and
+        # drawing its lines on left image
+        lines1 = cv2.computeCorrespondEpilines(pts2.reshape(-1, 1, 2), 2, F)
+        lines1 = lines1.reshape(-1, 3)
+        img10, img11 = drawlines(img1, img2, lines1, pts1, pts2)
+
+        # Find epilines corresponding to points in left image (first image) and
+        # drawing its lines on right image
+        lines2 = cv2.computeCorrespondEpilines(pts1.reshape(-1, 1, 2), 1, F)
+        lines2 = lines2.reshape(-1, 3)
+        img8, img9 = drawlines(img2, img1, lines2, pts2, pts1)
+        plt.subplot(121), plt.imshow(img10)
+        plt.subplot(122), plt.imshow(img8)
+        plt.show()
+"""
