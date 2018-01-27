@@ -37,8 +37,8 @@ def rejectConfig(configList):
 
 
 
-# Extraktor Konfiguration definieren
-Ntup = collections.namedtuple('ExtractorParams',
+# Extraktor Konfiguration definieren, Leerschlag beachten!
+Ntup = collections.namedtuple('something',
                               'type '
                               'maxfeatures '                 # nfeatures – The maximum number of features to retain.
                               'threshold '
@@ -107,21 +107,6 @@ parameters = [
          octaveLayers=[None],
          scale=[0, 1, 2],  # FAST Type (5_8  / 7_12  / 9_16)
          fast_nonmaxSuppression=[0, 1],  # default true
-         mser_delta=[None],
-         orb_WTAK=[None],
-         extended=[None],
-         upright=[None],
-         freak_scalenormalized=[None],
-         futureArgument1=[None]),
-
-    Ntup(type=['STAR'],
-         maxfeatures=[None],
-         threshold=[15, 30, 60],            #default 30
-         levels=[None],
-         octaves=[None],
-         octaveLayers=[None],
-         scale=[4, 16, 32],                 # STAR: MaxSize
-         fast_nonmaxSuppression=[2, 5, 12], # auch für star, dafault = 5
          mser_delta=[None],
          orb_WTAK=[None],
          extended=[None],
@@ -201,7 +186,7 @@ parameters = [
          freak_scalenormalized=[None],
          futureArgument1=[None]),
 
-     Ntup(type=[None],
+    Ntup(type=["LATCH"],
          maxfeatures=[None],
          threshold=[None],
          levels=[None],
@@ -223,16 +208,57 @@ for item in parameters:
     all_descriptor_defs.extend(tmplist)
 
 
+#Filter
+Ntup = collections.namedtuple('something',
+                              'maxFeatures '
+                              'reproMaxDistance')
+
+parameters = [
+    Ntup(maxFeatures=[50000],
+         reproMaxDistance=[3, 9])]
+
+all_filter_names = Ntup._fields
+all_filter_defs = list()
+for item in parameters:
+    tmplist = list(itertools.product(*item))
+    all_filter_defs.extend(tmplist)
+
+
+# 3d
+Ntup = collections.namedtuple('something',
+                              'MatrixF '
+                              'param1 '
+                              'param2')
+
+parameters = [
+    Ntup(MatrixF=['RANSAC'],            # use RANSAC to estimate F Matrix
+         param1=[None],
+         param2=[None]),
+
+    Ntup(MatrixF=['CALIBRATION'],       # use F stored in calibration File
+         param1=[None],
+         param2=[None])
+]
+
+all_3d_names = Ntup._fields
+all_3d_defs = list()
+for item in parameters:
+    tmplist = list(itertools.product(*item))
+    all_3d_defs.extend(tmplist)
+
+
+
+
 
 # Alle Prozess Schritte kombinieren
-all_combinations = itertools.product(all_extractor_defs, all_descriptor_defs)
+all_combinations = itertools.product(all_extractor_defs, all_descriptor_defs, all_filter_defs, all_3d_defs)
 masterlist = list(all_combinations)
 datestring = datetime.datetime.now().strftime("%Y-%m-%d")
 
 #Sectioncontrol bauen
 #Die .ini Datei ist in sections unterteilt.
-sectionnames = ('detector', 'extractor')
-fieldnames = (all_extractor_names, all_descriptor_names)
+sectionnames = ('detector', 'extractor', 'Filter', '3d')
+fieldnames = (all_extractor_names, all_descriptor_names, all_filter_names, all_3d_names)
 sectionids = tuple(range(len(sectionnames)))
 sectioncontrol = list(zip(sectionids, sectionnames, fieldnames))
 
@@ -240,8 +266,8 @@ sectioncontrol = list(zip(sectionids, sectionnames, fieldnames))
 # Outputfile schreiben
 verb = True         # Zeigt jeden Datainamen in der Console an.
 dryrun = False       # ohne Dateien zu schreiben.
-configfile_dir = "cfg/ini-batch1/"
-configfile_basename = "cfg-batch1-" + datestring
+configfile_dir = "tmp/" # "cfg/ini-batch1/"
+configfile_basename = "cfg-test-" + datestring
 configfile_root = configfile_dir + configfile_basename
 filecounterWritten = 0
 filecounterSkipped = 0

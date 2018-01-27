@@ -135,12 +135,16 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
         if detectortype == "orb":
             if not background:
                 print("using", detectortype)
-                cv2.ORB_create()
             describe = cv2.ORB_create(c.get('maxfeatures'),
                                       c.get('scale'),
                                       c.get('levels'),
                                       edgeThreshold=25,
                                       WTA_K=c.get('orb_wtak'))
+
+        if detectortype == "latch":
+            if not background:
+                print("using", detectortype)
+            describe = cv2.xfeatures2d.LATCH_create()
 
         if detectortype == "freak":
             if not background:
@@ -161,24 +165,33 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
         matches = sorted(matches, key=lambda x: x.distance)
 
         # Geht nur wenn sequentiell verglichen wird: Filtern nach Parallelität der Matches
-        # todo berechnen wie gross d abweichung sein darf bei erhöhten objekten auf dem dach.
-        # todo ein teil, das 50cm überragt wird ein vom median abweichendes d haben
         if seiteLRS == "L" or seiteLRS == "R":
             mfiltermatches, mfilterinfo = mFilter.mFilter(matches, kp1, kp2, 0.1)
             dfiltermatches, dfilterinfo = dFilter.dFilter(mfiltermatches, kp1, kp2, 25)
 
+        # Die Bilder sind zum selben Zeitpunkt aufgenommen von L und von R:
         elif seiteLRS == "S":
+            cfg = ini['Filter']
+            c = util.IniTypehandler(cfg)
             pts1 = []
             pts2 = []
-            good = matches[:50000]
+            good = matches[:c.get('maxMatches')]
             for match in good:
                 pts2.append(kp2[match.trainIdx].pt)
                 pts1.append(kp1[match.queryIdx].pt)
 
+            cfg = ini['MatrixF']
+            c = util.IniTypehandler(cfg)
             pts1 = np.int32(pts1)
             pts2 = np.int32(pts2)
-            F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
-            F = cal.f   # todo: .ini getrieben F laden oder ermitteln, errorMaxDistance ebenfalls via .ini
+            F_ransac, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
+            F_calibration = cal.f   # todo: .ini getrieben F laden oder ermitteln, errorMaxDistance ebenfalls via .ini
+            if c.get('MatrixF') == "ransac":
+                F = F_ransac
+            else:
+                F = F_calibration
+
+
             dfiltermatches, dfilterinfo = reproFilter.filterReprojectionError(good, F, 5, pts1, pts2)
             mfiltermatches = dfiltermatches
             mfilterinfo = "bfmatcher matches: " + str(matches.__len__())
@@ -238,7 +251,6 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
 
     timerend = timer()
     return {"Errors": None, "Result": "ok", "TimeElapsed": timerend-timerstart}
-
 
 
 
