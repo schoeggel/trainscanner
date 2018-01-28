@@ -8,18 +8,18 @@ import cv2
 import cvprocesssor
 
 # Bilder laden (Ein Bild nur einmal laden für alle .ini Files)
-bildnr = "12"
+bildnr = "./../sbbimg/21"
 seiteLRS = "S"  # Links / Rechts / Stereo
 
 if seiteLRS == "S":
-    imc1 = cv2.imread("img/" + bildnr + "L.png")
+    imc1 = cv2.imread(bildnr + "L.png")
     img1 = cv2.cvtColor(imc1, cv2.COLOR_BGR2GRAY)
-    imc2 = cv2.imread("img/" + bildnr + "R.png")
+    imc2 = cv2.imread(bildnr + "R.png")
     img2 = cv2.cvtColor(imc2, cv2.COLOR_BGR2GRAY)
 else:
-    imc1 = cv2.imread("img/" + str(int(bildnr) - 1) + seiteLRS + ".png")
+    imc1 = cv2.imread(str(int(bildnr) - 1) + seiteLRS + ".png")
     img1 = cv2.cvtColor(imc1, cv2.COLOR_BGR2GRAY)
-    imc2 = cv2.imread("img/" + bildnr + seiteLRS + ".png")
+    imc2 = cv2.imread(bildnr + seiteLRS + ".png")
     img2 = cv2.cvtColor(imc2, cv2.COLOR_BGR2GRAY)
 
 try:

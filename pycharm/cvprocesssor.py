@@ -180,19 +180,21 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
                 pts2.append(kp2[match.trainIdx].pt)
                 pts1.append(kp1[match.queryIdx].pt)
 
-            cfg = ini['MatrixF']
+
+
+            cfg = ini['3d']
             c = util.IniTypehandler(cfg)
             pts1 = np.int32(pts1)
             pts2 = np.int32(pts2)
             F_ransac, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
             F_calibration = cal.f   # todo: .ini getrieben F laden oder ermitteln, errorMaxDistance ebenfalls via .ini
-            if c.get('MatrixF') == "ransac":
+            if c.get('MatrixF').lower() == "ransac":
                 F = F_ransac
             else:
                 F = F_calibration
 
-
-            dfiltermatches, dfilterinfo = reproFilter.filterReprojectionError(good, F, 5, pts1, pts2)
+            c = util.IniTypehandler(ini['Filter'])
+            dfiltermatches, dfilterinfo = reproFilter.filterReprojectionError(good, F, c.get('reproMaxDistance'), pts1, pts2)
             mfiltermatches = dfiltermatches
             mfilterinfo = "bfmatcher matches: " + str(matches.__len__())
 
@@ -218,8 +220,11 @@ def cvprocess(img1, img2, inifile = standardfile, imgoutpath=None, seiteLRS="und
         pts2 = np.array(pts2.transpose(), dtype=np.float)
         test = cv2.triangulatePoints(cal.pl, cal.pr, pts1, pts2)
         print("Triangulation result:", test.shape)
-        np.save("tmp/3dpoints001.npy", test)
-
+        fn = "tmp/3dpoints002"
+        test = test[:-1] / test[-1]  # https://pythonpath.wordpress.com/import-cv2/
+        # test = test / np.max(test)
+        np.save(fn + ".npy", test.T)
+        np.savetxt(fn + ".asc", test.T, "%10.8f")
 
 
         if imgoutpath is not None:

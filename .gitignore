@@ -1,7 +1,8 @@
 #own
 tmp/
 batch1-all/
-.idea
+.idea/
+sbbimg/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
